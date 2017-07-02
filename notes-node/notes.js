@@ -2,26 +2,34 @@ console.log("notejs.js started!");
 
 const fs = require('fs');
 
-let addNote = (title, text) => {
-    let notes = [];
-
-    let note = {
-        title,
-        text
-    };
-
+let fetchNotes = () => {
     try {
         let notesString = fs.readFileSync('notes-data.json');
-        notes = JSON.parse(notesString);
+        return JSON.parse(notesString);
     } catch (error) {
-        console.log("File don't exist.");
+        return [];
     }
+};
+
+let saveNotes = (notes) => {
+    fs.writeFileSync('notes-data.json', JSON.stringify(notes));
+};
+
+let addNote = (title, text) => {
+    let notes = fetchNotes();
+    let created_at = new Date().toString();
+    let note = {
+        title,
+        text,
+        created_at
+    };
 
     let duplicateNote = notes.filter((note) => note.title === title);
 
     if(duplicateNote.length === 0) {
         notes.push(note);
-        fs.writeFileSync('notes-data.json', JSON.stringify(notes));
+        saveNotes(notes);
+        return note;
     }
 
 };
