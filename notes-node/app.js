@@ -1,11 +1,34 @@
-console.log("app.js started!");
-
 const _ = require("lodash");
 const yargs = require("yargs");
 
 const notes = require("./notes");
 
-const argv = yargs.argv;
+let title = {
+    describe: 'Title of note',
+    demand: true,
+    alias: 't'
+};
+
+let text = {
+    describe: 'Text of your note',
+    demand: true,
+    alias: 'e'
+};
+
+const argv = yargs
+    .command('add', 'Add new note.', {
+        title,
+        text
+    })
+    .command('read', 'Read a note', {
+        title
+    })
+    .command('list', 'Listing all notes')
+    .command('delete', 'Delete note', {
+        title
+    })
+    .help()
+    .argv;
 let command = process.argv[2];
 
 // console.log(argv._);
@@ -16,7 +39,8 @@ if (command === "add") {
         return console.log('Note already exist.');
     }
 
-    console.log(`Note created: ${note.title}, ${note.text}`);
+    console.log(`Note created:`);
+    notes.logNote(note);
 } else if (command === "read") {
   let note = notes.readNote(argv.title);
 
@@ -25,8 +49,7 @@ if (command === "add") {
   }
 
   console.log('Reading Note');
-  console.log(`Title: ${note.title}`);
-  console.log(`Text: ${note.text}`);
+  notes.logNote(note);
 } else if (command === "list") {
   let notesList = notes.listNotes();
 
@@ -36,15 +59,15 @@ if (command === "add") {
 
   console.log(`Your notes list are (${notesList.length}): `);
   _.each(notesList,(note) => {
-    console.log(`
-        title: ${note.title}
-        text: ${note.text}
-        created_at: ${note.created_at}`);
-    console.log('===================================================');
+    notes.logNote(note);
   });
 
 } else if (command === "delete") {
-  notes.deleteNote(argv.title);
+  let noteDelete = notes.deleteNote(argv.title);
+  if(!noteDelete) {
+    return console.log('Note not exist');
+  }
+  console.log('Note have been deleted!');
 } else {
   console.log("command not recognize");
 }

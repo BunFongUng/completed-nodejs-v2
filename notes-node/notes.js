@@ -1,5 +1,3 @@
-console.log("notejs.js started!");
-
 const fs = require('fs');
 
 let fetchNotes = () => {
@@ -36,24 +34,34 @@ let addNote = (title, text) => {
 
 let readNote = (title) => {
     let notes = fetchNotes();
-
     let noteFound = notes.filter((note) => note.title === title);
-
     return noteFound[0];
 };
 
 let listNotes = () => {
-    let notes = fetchNotes();
-    return notes;
+    return fetchNotes();
 };
 
 let deleteNote = (title) => {
-    console.log(`Delete note: ${title}`);
+    let notes = fetchNotes();
+    let newNotes = notes.filter((note) => note.title !== title);
+    saveNotes(newNotes);
+    return notes.length !== newNotes.length;
+};
+
+let logNote = (note) => {
+    debugger;
+    console.log('========================================');
+    console.log(`Title: ${note.title}`);
+    console.log(`Text: ${note.text}`);
+    console.log(`Created_at: ${note.created_at}`);
+    console.log('========================================');
 };
 
 module.exports = {
     addNote,
     readNote,
     listNotes,
-    deleteNote
+    deleteNote,
+    logNote
 };
