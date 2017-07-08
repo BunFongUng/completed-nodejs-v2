@@ -13,14 +13,36 @@ let command = process.argv[2];
 if (command === "add") {
   let note = notes.addNote(argv.title, argv.text);
     if(!note) {
-        return console.log('could save the note.');
+        return console.log('Note already exist.');
     }
 
     console.log(`Note created: ${note.title}, ${note.text}`);
 } else if (command === "read") {
-  notes.readNote(argv.title);
+  let note = notes.readNote(argv.title);
+
+  if(!note) {
+    return console.log('Not Found!');
+  }
+
+  console.log('Reading Note');
+  console.log(`Title: ${note.title}`);
+  console.log(`Text: ${note.text}`);
 } else if (command === "list") {
-  notes.listNotes();
+  let notesList = notes.listNotes();
+
+  if(notesList.length === 0) {
+    return console.log('There is no notes');
+  }
+
+  console.log(`Your notes list are (${notesList.length}): `);
+  _.each(notesList,(note) => {
+    console.log(`
+        title: ${note.title}
+        text: ${note.text}
+        created_at: ${note.created_at}`);
+    console.log('===================================================');
+  });
+
 } else if (command === "delete") {
   notes.deleteNote(argv.title);
 } else {
