@@ -1,6 +1,7 @@
 const request = require('request');
+const axios = require('axios');
 
-const fetchWeather = (lat, lng, callback) => {
+let fetchWeather = (lat, lng, callback) => {
     request({
         url: `https://api.darksky.net/forecast/683e3b7cbca0b851f99370500ce745e5/${lat},${lng}`,
         json: true
@@ -17,7 +18,7 @@ const fetchWeather = (lat, lng, callback) => {
     });
 }
 
-const fetchWeatherPromise = (lat, lng, address) => {
+let fetchWeatherPromise = (lat, lng, address) => {
     return new Promise((resolve, reject) => {
         request({
              url: `https://api.darksky.net/forecast/683e3b7cbca0b851f99370500ce745e5/${lat},${lng}`,
@@ -35,7 +36,16 @@ const fetchWeatherPromise = (lat, lng, address) => {
     });
 }
 
+let fetchWeatherAxios = (lat, lng) => {
+    return axios({
+        url:`https://api.darksky.net/forecast/683e3b7cbca0b851f99370500ce745e5/${lat},${lng}`,
+        method: 'get',
+        responseType: 'json'
+    });
+}
+
 module.exports = {
     fetchWeather,
-    fetchWeatherPromise
+    fetchWeatherPromise,
+    fetchWeatherAxios
 };

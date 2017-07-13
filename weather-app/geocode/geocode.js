@@ -1,4 +1,5 @@
 const request = require('request');
+const axios = require('axios');
 
 let geocodeAddress = (address, callback) => {
     const encodedAddress = encodeURIComponent(address);
@@ -43,7 +44,16 @@ let geocodeAddressPromise = (address) => {
     });
 };
 
+let geocodeAddressAxios = (address) => {
+    const encodedAddress = encodeURIComponent(address);
+    return axios({
+        url: `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}`,
+        method: 'get',
+        responseType: 'json'
+    });
+}
+
 module.exports = {
     geocodeAddress,
-    geocodeAddressPromise
+    geocodeAddressPromise,
 };
