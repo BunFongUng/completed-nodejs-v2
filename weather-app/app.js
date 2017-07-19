@@ -10,7 +10,8 @@ const argv = yargs
       demand: true,
       alias: "address",
       describe: "Enter your current address",
-      string: true
+      string: true,
+      default: 'phnom penh'
     }
   })
   .help()
