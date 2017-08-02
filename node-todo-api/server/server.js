@@ -1,43 +1,16 @@
-const mongoose = require('mongoose');
+const express = require('express');
+const bodyParser = require('body-parser');
 
-mongoose.Promise = global.Promise;
+const todoController = require('./controllers/todoController');
 
-try {
-	mongoose.connect('mongodb://localhost:27017/TodosAppV2', {
-  	useMongoClient: true,
-	});
-} catch (error) {
-	mongoose.createConnection('mongodb://localhost:27017/TodosAppV2', {
-  	useMongoClient: true,
-		/* other options */
-	});
-}
+const PORT = process.env.PORT || 4200;
+const app = express();
 
-mongoose.connection.once('open', () => {
-	console.log('MongoDB is running.');
-}).on('error', err => {
-	throw err;
-});
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-let Todo = mongoose.model('Todo', {
-	title: {
-		type: String
-	},
-	completed: {
-		type: Boolean
-	},
-	completedAt: {
-		type: Number
-	}
-});
+app.post('/todo', todoController.addTodo);
 
-let myTodo = new Todo({
-	title: 'Learning NodeJS',
-	completed: true
-});
-
-myTodo.save().then(doc => {
-	console.log(doc);
-}).catch(err => {
-	console.log(err);
+app.listen(PORT, () => {
+	console.log(`Server is running on ${PORT}.`);
 });
