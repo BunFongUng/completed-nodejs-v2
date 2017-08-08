@@ -1,16 +1,21 @@
+require('dotenv').config();
+
 const express = require('express');
-const bodyParser = require('body-parser');
 
-const todoController = require('./controllers/todoController');
+const { appMiddlewares } = require('./middlewares/middleware');
 
-const PORT = process.env.PORT || 4200;
+const { todosRoute } = require('./routes/todos.route');
+
+const PORT = process.env.PORT;
+
 const app = express();
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+appMiddlewares(app);
 
-app.post('/todo', todoController.addTodo);
+app.use('/api', todosRoute)
 
 app.listen(PORT, () => {
 	console.log(`Server is running on ${PORT}.`);
 });
+
+module.exports = { app };

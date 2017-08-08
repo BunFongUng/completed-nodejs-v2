@@ -1,6 +1,6 @@
-const dbConfig = require('../../config/dbConfig');
+const { mongoose, Schema } = require('../config/dbConfig');
 
-let todoSchema = new dbConfig.Schema({
+let todoSchema = new Schema({
 	title: {
 		type: String,
 		required: true,
@@ -17,7 +17,7 @@ let todoSchema = new dbConfig.Schema({
 	}
 });
 
-let Todo = dbConfig.mongoose.model('Todo', todoSchema);
+let Todo = mongoose.model('Todo', todoSchema);
 
 module.exports = {
 	Todo

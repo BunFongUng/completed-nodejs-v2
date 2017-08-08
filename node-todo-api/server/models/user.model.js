@@ -1,6 +1,6 @@
-const dbConfig = require('../../config/dbConfig');
+const { mongoose, Schema } = require('../config/dbConfig');
 
-let userSchema = new dbConfig.Schema({
+let userSchema = new Schema({
 	firstName: {
 		type: String,
 		required: true,
@@ -22,5 +22,5 @@ let userSchema = new dbConfig.Schema({
 });
 
 module.exports = {
-	User: dbConfig.mongoose.model('User', userSchema),
+	User: mongoose.model('User', userSchema),
 };
