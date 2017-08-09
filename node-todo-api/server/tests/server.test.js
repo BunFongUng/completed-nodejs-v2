@@ -1,7 +1,11 @@
 const expect = require('expect');
+
 const request = require('supertest');
 
+const { ObjectID } = require('mongodb');
+
 const { app } = require('../server');
+
 const { Todo } = require('../models/todo.model');
 
 let todos = [{
@@ -59,5 +63,16 @@ describe('GET /todos', () => {
 				expect(res.body.data.length).toBe(2);
 			})
 			.end(done);
+	});
+});
+
+describe('GET /todos/:id', () => {
+	it('should get todo by id', done => {
+		request(app)
+			.get('/api/todos')
+			.expect(200)
+			.expect(res => {
+				let todoId = res.body.data[0]._id;
+			});
 	});
 });

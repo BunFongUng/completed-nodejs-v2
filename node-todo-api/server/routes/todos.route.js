@@ -8,6 +8,8 @@ route.get('/todos', todoController.fetchTodos);
 
 route.post('/todos', todoController.addTodo);
 
+route.get('/todos/:id', todoController.fetchTodoById);
+
 module.exports = {
 	todosRoute: route
  };

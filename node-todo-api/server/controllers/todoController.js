@@ -1,3 +1,5 @@
+const { ObjectID } = require('mongodb');
+
 const { Todo } = require("../models/todo.model");
 
 module.exports = {
@@ -24,6 +26,33 @@ module.exports = {
 				status: 'error',
 				message: err
 			});
+		});
+	},
+	fetchTodoById: (req, res) => {
+		let todoId = req.params.id;
+
+		if(!ObjectID.isValid(todoId)) {
+			return res.status(404).json({
+				status: 'error',
+				message: 'Invalid todo ID'
+			});
+		}
+
+		Todo.findById(todoId).then(todo => {
+
+			if(!todo) {
+				return res.status(404).json({
+					status: 'error',
+					message: 'Todo not found'
+				});
+			}
+
+			res.json({
+				status: 'success',
+				data: todo
+			});
+		}).catch( err => {
+			res.status(400).send(err);
 		});
 	}
 };
