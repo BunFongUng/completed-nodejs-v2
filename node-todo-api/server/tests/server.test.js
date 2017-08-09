@@ -4,6 +4,18 @@ const request = require('supertest');
 const { app } = require('../server');
 const { Todo } = require('../models/todo.model');
 
+let todos = [{
+	title: 'todo test 1'
+}, {
+	title: 'todo test 2'
+}];
+
+beforeEach(done => {
+	Todo.remove({}).then(() => {
+		return Todo.insertMany(todos);
+	}).then(() => done());
+});
+
 describe('POST /todos', () => {
 	it('should create a new todo', (done) => {
 		let title = 'Talking phone with honey';
@@ -34,6 +46,18 @@ describe('POST /todos', () => {
 			.post('/api/todos')
 			.send({})
 			.expect(400)
+			.end(done);
+	});
+});
+
+describe('GET /todos', () => {
+	it('should get all todos', done => {
+		request(app)
+			.get('/api/todos')
+			.expect(200)
+			.expect(res => {
+				expect(res.body.data.length).toBe(2);
+			})
 			.end(done);
 	});
 });
