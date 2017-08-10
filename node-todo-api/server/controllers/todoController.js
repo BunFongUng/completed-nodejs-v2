@@ -54,5 +54,36 @@ module.exports = {
 		}).catch( err => {
 			res.status(400).send(err);
 		});
+	},
+	deleteTodoById: (req, res) => {
+		let todoId = req.params.id;
+
+		if(!ObjectID.isValid(todoId)) {
+			return res.status(404).json({
+				status: 'error',
+				message: 'Invalid todo ID'
+			});
+		}
+
+		Todo.findByIdAndRemove(todoId).then(todo => {
+			if(!todo) {
+				return res.status(404).json({
+					status: 'error',
+					message: 'Todo not found.'
+				});
+			}
+
+			res.json({
+				status: 'success',
+				data: {
+					message: 'Successfully removed todo'
+				}
+			});
+		}).catch(err => {
+			res.status(400).json({
+				status: 'error',
+				error: err
+			});
+		});
 	}
 };

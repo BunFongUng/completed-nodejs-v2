@@ -10,6 +10,8 @@ route.post('/todos', todoController.addTodo);
 
 route.get('/todos/:id', todoController.fetchTodoById);
 
+route.delete('/todos/:id', todoController.deleteTodoById);
+
 module.exports = {
 	todosRoute: route
  };
