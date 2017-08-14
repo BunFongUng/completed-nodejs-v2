@@ -93,3 +93,29 @@ describe('GET /todos/:id', () => {
 			.end(done);
 	});
 });
+
+describe('DELETE /todos/:id', () => {
+	it('should delete todo by the specific id', done => {
+		request(app)
+			.delete(`/api/todos/${todos[0]._id.toHexString()}`)
+			.expect(200)
+			.expect(res => {
+				expect(res.body.data.message).toBe('Successfully removed todo');
+			})
+			.end(done);
+	});
+
+	it('should return 404 if todo id not found', done => {
+		request(app)
+			.delete(`/api/todos/598c76aebaaa24594fb4d371}`)
+			.expect(404)
+			.end(done);
+	});
+
+	it('should return 404 if todo id is invalid', done => {
+		request(app)
+			.delete('/api/todos/1234')
+			.expect(404)
+			.end(done);
+	});
+});
