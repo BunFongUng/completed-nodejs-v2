@@ -12,6 +12,8 @@ route.get('/todos/:id', todoController.fetchTodoById);
 
 route.delete('/todos/:id', todoController.deleteTodoById);
 
+route.patch('/todos/:id', todoController.updateTodo);
+
 module.exports = {
 	todosRoute: route
  };

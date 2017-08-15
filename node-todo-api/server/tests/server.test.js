@@ -119,3 +119,36 @@ describe('DELETE /todos/:id', () => {
 			.end(done);
 	});
 });
+
+describe('PATCH /todos/:id', () => {
+	it('should update a todo', done => {
+		request(app)
+			.patch(`/api/todos/${todos[0]._id}`)
+			.send({
+				title: 'Todo test 1 updated title',
+				completed: true
+			})
+			.expect(200)
+			.expect(res => {
+				expect(res.body.data.completed).toBe(true);
+			})
+			.end(done);
+	});
+
+	it('should return 404 if todo id not found', done => {
+		request(app)
+			.patch(`/api/todos/598c76aebaaa24594fb4d371`)
+			.send({ completed: true })
+			.expect(404)
+			.end(done);
+	});
+
+	it('should return 404 if todo id is invalid', done => {
+		request(app)
+			.patch('/api/todos/123412313')
+			.send({ completed: false })
+			.expect(404)
+			.end(done);
+	});
+
+});

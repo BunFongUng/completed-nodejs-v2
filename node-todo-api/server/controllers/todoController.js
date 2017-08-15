@@ -92,6 +92,7 @@ module.exports = {
 		let todoId = req.params.id;
 		let body = _.pick(req.body, ['title', 'completed']);
 
+		// validate todo id
 		if(!ObjectID.isValid(todoId)) {
 			return res.status(404).json({
 				status: 'error',
@@ -99,6 +100,7 @@ module.exports = {
 			});
 		}
 
+		// if body.completed is true and body.completed is define
 		if(_.isBoolean(body.completed) && body.completed) {
 			body.completedAt = new Date().getTime();
 		} else {
@@ -107,6 +109,7 @@ module.exports = {
 		}
 
 		Todo.findByIdAndUpdate(todoId, { $set: body }, { new: true }).then(todo => {
+			// if no todo return
 			if(!todo) {
 				return res.status(404).json({
 					status: 'error',
