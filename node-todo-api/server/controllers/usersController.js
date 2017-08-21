@@ -8,16 +8,12 @@ module.exports = {
 	registerUser: (req, res) => {
 		let body = _.pick(req.body, ['firstName', 'lastName', 'email', 'password',]);
 
-		User.create(body).then(user => {
-			// res.json({
-			// 	status: 'success',
-			// 	data: user,
-			// 	error: null
-			// });
+		let user = new User(body);
+
+		user.save().then(() => {
 			return user.generateAuthToken();
 		}).then(token => {
-			console.log(token);
-			res.send(token);
+			res.header('x-auth', token).send(user);
 		}).catch(err => {
 			res.status(400).json({
 				status: 'error',
