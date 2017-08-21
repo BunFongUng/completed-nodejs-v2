@@ -24,4 +24,11 @@ module.exports = {
 			});
 		});
 	},
+	userProfile: (req, res) => {
+		res.json({
+			status: 'success',
+			data: req.user,
+			error: null
+		});
+	}
 };

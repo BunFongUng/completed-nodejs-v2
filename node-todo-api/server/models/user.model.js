@@ -1,3 +1,5 @@
+// require('dotenv').config();
+
 const validator = require('validator');
 
 const jwt = require('jsonwebtoken');
@@ -26,7 +28,7 @@ let userSchema = new Schema({
 		required: true,
 		unique: true,
 		validate: {
-			validator: validator.isEmail,
+			validator: (value) => validator.isEmail(value),
 			message: '{VALUE} is not valid email.'
 		}
 	},
@@ -59,7 +61,7 @@ userSchema.methods.generateAuthToken = function() {
 
 	let token = jwt.sign({
 		_id: user._id.toHexString(),
-		access
+		access,
 	}, process.env.SECRET_KEY).toString();
 
 	user.tokens.push({
@@ -68,6 +70,23 @@ userSchema.methods.generateAuthToken = function() {
 	});
 
 	return user.save().then(() => token);
+}
+
+userSchema.statics.findByToken = function(token) {
+	let User = this;
+	let decoded;
+
+	try {
+		decoded = jwt.verify(token, process.env.SECRET_KEY);
+	} catch (error) {
+		return Promise.reject();
+	}
+
+	return User.findOne({
+		'_id': decoded._id,
+		'tokens.token': token,
+		'tokens.access': 'auth'
+	});
 }
 
 module.exports = {
