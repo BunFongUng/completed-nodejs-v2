@@ -8,19 +8,10 @@ const { app } = require('../server');
 
 const { Todo } = require('../models/todo.model');
 
-let todos = [{
-	_id: new ObjectID(),
-	title: 'todo test 1'
-}, {
-	_id: new ObjectID(),
-	title: 'todo test 2'
-}];
+const {todos, users, populateTodos, populateUsers} = require('./seed/seed');
 
-beforeEach(done => {
-	Todo.remove({}).then(() => {
-		return Todo.insertMany(todos);
-	}).then(() => done());
-});
+beforeEach(populateTodos);
+beforeEach(populateUsers);
 
 describe('POST /todos', () => {
 	it('should create a new todo', (done) => {
@@ -152,3 +143,19 @@ describe('PATCH /todos/:id', () => {
 	});
 
 });
+
+// console.log(users[0]);
+
+// describe('POST /api/users', () => {
+// 	it('signup new user with generated token', done => {
+// 		request(app)
+// 			.post('/api/users')
+// 			.send(users[0])
+// 			.expect(200)
+// 			.expect((res) => {
+// 				console.log('POST /api/user response', res);
+// 				expect(res.body.firstName).toBe('user1 firstName');
+// 			})
+// 			.end(done);
+// 	});
+// });
