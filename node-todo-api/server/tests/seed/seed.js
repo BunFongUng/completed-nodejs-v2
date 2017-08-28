@@ -24,7 +24,7 @@ let populateTodos = done => {
 
 let user1Id = new ObjectID();
 let user2Id = new ObjectID();
-let secretKey = 'nodejsapp'
+let secretKey = '!node&js*todo~appy';
 
 let users = [{
 	_id: user1Id,

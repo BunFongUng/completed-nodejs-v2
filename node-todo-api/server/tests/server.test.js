@@ -8,9 +8,12 @@ const { app } = require('../server');
 
 const { Todo } = require('../models/todo.model');
 
+const { User } = require('../models/user.model');
+
 const {todos, users, populateTodos, populateUsers} = require('./seed/seed');
 
 beforeEach(populateTodos);
+
 beforeEach(populateUsers);
 
 describe('POST /todos', () => {
@@ -144,18 +147,78 @@ describe('PATCH /todos/:id', () => {
 
 });
 
-// console.log(users[0]);
+describe('GET /api/users/me', () => {
+	it('should return user if authenticated', done => {
+		request(app)
+			.get('/api/users/me')
+			.set('x-auth', users[0].tokens[0].token)
+			.expect(200)
+			.expect(res => {
+				expect(res.body.data._id).toBe(users[0]._id.toHexString());
+				expect(res.body.data.email).toBe(users[0].email);
+			})
+			.end(done);
+	});
 
-// describe('POST /api/users', () => {
-// 	it('signup new user with generated token', done => {
-// 		request(app)
-// 			.post('/api/users')
-// 			.send(users[0])
-// 			.expect(200)
-// 			.expect((res) => {
-// 				console.log('POST /api/user response', res);
-// 				expect(res.body.firstName).toBe('user1 firstName');
-// 			})
-// 			.end(done);
-// 	});
-// });
+	it('should return 401 if not authenticated', done => {
+		request(app)
+			.get('/api/users/me')
+			.expect(401)
+			.expect(res => {
+				expect(res.body.error.message).toBe('Unauthorized');
+			})
+			.end(done);
+	});
+});
+
+describe('POST /api/users', () => {
+	it('should create a user', done => {
+		let firstName = 'testing';
+		let lastName = 'last';
+		let email = 'testing@example.com';
+		let password = '123456';
+
+		request(app)
+			.post('/api/users')
+			.send({firstName, lastName,email, password})
+			.expect(200)
+			.expect(res => {
+				expect(res.headers['x-auth']).toExist();
+				expect(res.body._id).toExist();
+				expect(res.body.email).toBe(email);
+			})
+			.end(err => {
+				if(err) return done(err);
+
+				User.findOne({email}).then(user => {
+					expect(user).toExist();
+					expect(user._id).toNotBe(password);
+					done();
+				});
+			});
+	});
+
+	it('should return validation error message if request invalid', done => {
+		let email = 'test1';
+		let password = '1';
+
+		request(app)
+			.post('/api/users')
+			.send({email, password})
+			.expect(400)
+			.end(done);
+	});
+
+	it('should not create user if email in use', done => {
+		let firstName = 'testing';
+		let lastName = 'last';
+		let email = 'testing@example.com';
+		let password = '123456';
+
+		request(app)
+			.post('/api/users')
+			.send({email, password})
+			.expect(400)
+			.end(done);
+	});
+});
