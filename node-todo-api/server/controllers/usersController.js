@@ -24,15 +24,34 @@ const registerUser = (req, res) => {
 	});
 };
 
+const userLogin = (req, res) => {
+	let body = _.pick(req.body, ['email', 'password']);
+
+	User.findByCredentials(body.email, body.password).then(user => {
+		return user.generateAuthToken().then(token => {
+			res.header('x-auth', token).send(user);
+		});
+	}).catch(err => {
+		res.status(400).json({
+			status: 'error',
+			data: null,
+			error: {
+				message: err
+			}
+		});
+	});
+};
+
 const userProfile = (req, res) => {
 	res.json({
 		status: 'success',
 		data: req.user,
 		error: null
 	});
-}
+};
 
 module.exports = {
 	registerUser,
 	userProfile,
+	userLogin
 };

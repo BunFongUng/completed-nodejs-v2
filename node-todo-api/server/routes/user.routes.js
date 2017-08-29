@@ -14,6 +14,8 @@ route.post('/users', validate(signUp), usersController.registerUser);
 
 route.get('/users/me', authentication, usersController.userProfile);
 
+route.post('/users/login', usersController.userLogin);
+
 module.exports = {
 	userRoutes: route
 };
