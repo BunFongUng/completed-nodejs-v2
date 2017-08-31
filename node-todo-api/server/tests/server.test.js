@@ -222,3 +222,30 @@ describe('POST /api/users', () => {
 			.end(done);
 	});
 });
+
+describe('POST /api/users/login', () => {
+	it('should login user and return auth token', done => {
+		let email = users[0].email;
+		let password = users[0].password;
+
+		request(app)
+			.post('/api/users/login')
+			.send({email, password})
+			.expect(200)
+			.expect(res => {
+				expect(res.headers['x-auth']).toExist();
+			})
+			.end(done);
+	});
+
+	it('should reject invalid login', done => {
+		let email = users[1].email;
+		let password = users[1].password + '1234';
+
+		request(app)
+			.post('/api/users/login')
+			.send({ email, password })
+			.expect(400)
+			.end(done);
+	});
+});
