@@ -50,8 +50,23 @@ const userProfile = (req, res) => {
 	});
 };
 
+const userLogout = (req, res) => {
+	req.user.removeToken(req.token).then(() => {
+		res.status(200).send();
+	}).catch(err => {
+		res.status(400).json({
+			status: 'error',
+			data: null,
+			error: {
+				message: err
+			}
+		});
+	});
+};
+
 module.exports = {
 	registerUser,
 	userProfile,
-	userLogin
+	userLogin,
+	userLogout
 };

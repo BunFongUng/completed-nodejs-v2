@@ -6,7 +6,8 @@ const { Todo } = require("../models/todo.model");
 
 module.exports = {
 	addTodo: (req, res) => {
-		let body = req.body;
+		let body = _.pick(req.body, ['title']);
+		body._creator = req.user._id;
 
 		Todo.create(body).then(doc => {
 			res.status(200).json({
@@ -18,7 +19,9 @@ module.exports = {
 		});
 	},
 	fetchTodos: (req, res) => {
-		Todo.find().then(todos => {
+		Todo.find({
+			_creator: req.user._id
+		}).then(todos => {
 			res.json({
 				status: 'success',
 				data: todos
@@ -32,6 +35,7 @@ module.exports = {
 	},
 	fetchTodoById: (req, res) => {
 		let todoId = req.params.id;
+		let _creatorId = req.user._id;
 
 		if(!ObjectID.isValid(todoId)) {
 			return res.status(404).json({
@@ -40,8 +44,11 @@ module.exports = {
 			});
 		}
 
-		Todo.findById(todoId).then(todo => {
-
+		Todo.findOne({
+			_id: todoId,
+			_creator: _creatorId
+		}).then(todo => {
+			console.log(todo);
 			if(!todo) {
 				return res.status(404).json({
 					status: 'error',
@@ -59,6 +66,7 @@ module.exports = {
 	},
 	deleteTodoById: (req, res) => {
 		let todoId = req.params.id;
+		let _creatorId = req.user._id;
 
 		if(!ObjectID.isValid(todoId)) {
 			return res.status(404).json({
@@ -67,7 +75,10 @@ module.exports = {
 			});
 		}
 
-		Todo.findByIdAndRemove(todoId).then(todo => {
+		Todo.findOneAndRemove({
+			_id: todoId,
+			_creator: _creatorId
+		}).then(todo => {
 			if(!todo) {
 				return res.status(404).json({
 					status: 'error',
@@ -91,6 +102,7 @@ module.exports = {
 	updateTodo: (req, res) => {
 		let todoId = req.params.id;
 		let body = _.pick(req.body, ['title', 'completed']);
+		let _creatorId = req.user._id;
 
 		// validate todo id
 		if(!ObjectID.isValid(todoId)) {
@@ -108,7 +120,7 @@ module.exports = {
 			body.completedAt = null;
 		}
 
-		Todo.findByIdAndUpdate(todoId, { $set: body }, { new: true }).then(todo => {
+		Todo.findOneAndUpdate({ _id: todoId, _creator: _creatorId}, { $set: body }, { new: true }).then(todo => {
 			// if no todo return
 			if(!todo) {
 				return res.status(404).json({

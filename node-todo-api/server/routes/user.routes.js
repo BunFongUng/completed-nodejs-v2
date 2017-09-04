@@ -16,6 +16,8 @@ route.get('/users/me', authentication, usersController.userProfile);
 
 route.post('/users/login', usersController.userLogin);
 
+route.delete('/users/logout', authentication, usersController.userLogout);
+
 module.exports = {
 	userRoutes: route
 };

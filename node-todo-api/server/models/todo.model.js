@@ -14,6 +14,10 @@ let todoSchema = new Schema({
 	completedAt: {
 		type: Number,
 		default: Date.now,
+	},
+	_creator: {
+		type: mongoose.Schema.Types.ObjectId,
+		required: true
 	}
 });
 

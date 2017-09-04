@@ -3,25 +3,6 @@ const jwt = require('jsonwebtoken');
 const { Todo } = require("./../../models/todo.model");
 const { User } = require("./../../models/user.model");
 
-let todos = [
-  {
-    _id: new ObjectID(),
-    title: "todo test 1"
-  },
-  {
-    _id: new ObjectID(),
-    title: "todo test 2"
-  }
-];
-
-let populateTodos = done => {
-  Todo.remove({})
-    .then(() => {
-      return Todo.insertMany(todos);
-    })
-    .then(() => done());
-};
-
 let user1Id = new ObjectID();
 let user2Id = new ObjectID();
 let secretKey = '!node&js*todo~appy';
@@ -42,6 +23,10 @@ let users = [{
 	lastName: 'user2 lastName',
 	email: 'user2@example.com',
 	password: 'user2_password',
+	tokens: [{
+		access: 'auth',
+		token: jwt.sign({_id: user2Id, access: 'auth'}, secretKey)
+	}]
 }]
 
 populateUsers = done => {
@@ -53,6 +38,27 @@ populateUsers = done => {
 		})
 		.then(() => done());
 }
+
+let todos = [
+  {
+    _id: new ObjectID(),
+		title: "todo test 1",
+		_creator: user1Id
+  },
+  {
+    _id: new ObjectID(),
+		title: "todo test 2",
+		_creator: user2Id
+  }
+];
+
+let populateTodos = done => {
+  Todo.remove({})
+    .then(() => {
+      return Todo.insertMany(todos);
+    })
+    .then(() => done());
+};
 
 module.exports = {
 	todos,
